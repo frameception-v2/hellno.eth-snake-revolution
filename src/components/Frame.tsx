@@ -22,17 +22,17 @@ import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
 import { PROJECT_TITLE } from "~/lib/constants";
 
-function ExampleCard() {
+function GameCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Welcome to the Frame Template</CardTitle>
+        <CardTitle>Snake Game</CardTitle>
         <CardDescription>
-          This is an example card that you can customize or remove
+          Use direction buttons to move the snake
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Label>Place content in a Card here.</Label>
+        <GameCanvas />
       </CardContent>
     </Card>
   );
@@ -140,7 +140,7 @@ export default function Frame() {
         <h1 className="text-2xl font-bold text-center mb-4 text-gray-700 dark:text-gray-300">
           {PROJECT_TITLE}
         </h1>
-        <ExampleCard />
+        <GameCard />
       </div>
     </div>
   );
