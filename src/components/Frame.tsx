@@ -21,6 +21,16 @@ import { useSession } from "next-auth/react";
 import { createStore } from "mipd";
 import { Label } from "~/components/ui/label";
 import { PROJECT_TITLE } from "~/lib/constants";
+import { PurpleButton } from "./ui/PurpleButton";
+
+function GameCanvas() {
+  return (
+    <div className="w-full aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg mb-4">
+      {/* Snake game canvas will be implemented here */}
+      <div className="text-center py-8 text-gray-500">Game Canvas Loading...</div>
+    </div>
+  );
+}
 
 function GameCard() {
   return (
@@ -48,17 +58,19 @@ export default function Frame() {
 
   const addFrame = useCallback(async () => {
     try {
-      await sdk.actions.addFrame();
+      const result = await sdk.actions.addFrame();
+      setAdded(true);
+      setAddFrameResult("Frame added successfully!");
+      console.log("Frame added:", result);
     } catch (error) {
+      let errorMessage = "Failed to add frame";
       if (error instanceof AddFrame.RejectedByUser) {
-        setAddFrameResult(`Not added: ${error.message}`);
+        errorMessage = `User denied request: ${error.message}`;
+      } else if (error instanceof AddFrame.InvalidDomainManifest) {
+        errorMessage = `Invalid configuration: ${error.message}`;
       }
-
-      if (error instanceof AddFrame.InvalidDomainManifest) {
-        setAddFrameResult(`Not added: ${error.message}`);
-      }
-
-      setAddFrameResult(`Error: ${error}`);
+      setAddFrameResult(errorMessage);
+      console.error("Add frame error:", error);
     }
   }, []);
 
@@ -118,7 +130,11 @@ export default function Frame() {
       setIsSDKLoaded(true);
       load();
       return () => {
+        // Clean up all event listeners
         sdk.removeAllListeners();
+        // Reset frame state
+        setAdded(false);
+        setContext(undefined);
       };
     }
   }, [isSDKLoaded, addFrame]);
